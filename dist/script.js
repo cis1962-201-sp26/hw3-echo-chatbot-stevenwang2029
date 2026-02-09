@@ -1,66 +1,53 @@
 export {};
-
-type Message = { role: string; content: string };
-
-let currentChat: { messages: Message[] } = { messages: [] };
-
+var currentChat = { messages: [] };
 /**
  * Simulates a bot response to a user message
  * @param {string} userMessage - The user's message
  * @returns {string} - The bot's response
  */
-function simulateBotResponse(userMessage: Message['content']) {
+function simulateBotResponse(userMessage) {
     // Simulate bot response with a delay
-    setTimeout(() => {
-        const botReply: string = `You said: "${userMessage}"`;
+    setTimeout(function () {
+        var botReply = "You said: \"".concat(userMessage, "\"");
         sendMessage('Echo', botReply);
     }, 500);
 }
-
 /**
  * Sends a message in the current chat
  * @param {string} role - The role of the message sender ('User' or 'Echo')
  * @param {string} message - The message content
  */
-function sendMessage(role: string, message: string) {
-    const msg: Message = { role, content: message };
+function sendMessage(role, message) {
+    var msg = { role: role, content: message };
     currentChat.messages.push(msg);
     localStorage.setItem('chat', JSON.stringify(currentChat));
     renderMessages(currentChat.messages);
 }
-
 /**
  * Renders the messages in the chat current selected
  * @param {{role: string, content: string}[]} messages - The messages to render
  */
-function renderMessages(messages: Message[]) {
-    const container = document.getElementById('messages') as HTMLDivElement;
+function renderMessages(messages) {
+    var container = document.getElementById('messages');
     container.innerHTML = '';
-
-    for (const msg of messages) {
-        const bubble = document.createElement('div');
+    for (var _i = 0, messages_1 = messages; _i < messages_1.length; _i++) {
+        var msg = messages_1[_i];
+        var bubble = document.createElement('div');
         bubble.classList.add('message');
-        bubble.classList.add(
-            msg.role === 'User' ? 'message-user' : 'message-bot',
-        );
-
-        const roleLabel = document.createElement('div');
+        bubble.classList.add(msg.role === 'User' ? 'message-user' : 'message-bot');
+        var roleLabel = document.createElement('div');
         roleLabel.classList.add('message-role');
         roleLabel.textContent = msg.role;
-
-        const content = document.createElement('div');
+        var content = document.createElement('div');
         content.textContent = msg.content;
-
         bubble.appendChild(roleLabel);
         bubble.appendChild(content);
         container.appendChild(bubble);
     }
-
     // scroll to the bottom so the newest message is visible
-    const chatArea = document.getElementById('chat-area') as HTMLElement;
+    var chatArea = document.getElementById('chat-area');
     chatArea.scrollTop = chatArea.scrollHeight;
 }
-
 /**
  * Creates a new chat
  * @requirements
@@ -73,7 +60,6 @@ function createNewChat() {
     localStorage.setItem('chat', JSON.stringify(currentChat));
     renderMessages(currentChat.messages);
 }
-
 /**
  * Initializes the app
  * @requirements
@@ -82,37 +68,32 @@ function createNewChat() {
  * - If no chat exists, create a new chat
  */
 function initializeApp() {
-    const saved = localStorage.getItem('chat');
+    var saved = localStorage.getItem('chat');
     if (saved) {
-        const parsed = JSON.parse(saved) as { messages: Message[] };
+        var parsed = JSON.parse(saved);
         currentChat = parsed;
         renderMessages(currentChat.messages);
-    } else {
+    }
+    else {
         createNewChat();
     }
 }
-
 // Event listener to reset the chat messages when the "New Chat" button is clicked
-const newChatBtn = document.getElementById(
-    'new-chat-btn',
-) as HTMLButtonElement;
-newChatBtn.addEventListener('click', () => {
+var newChatBtn = document.getElementById('new-chat-btn');
+newChatBtn.addEventListener('click', function () {
     createNewChat();
 });
-
 // Event listener to handle sending messages when the user submits the chat input form
-const chatForm = document.getElementById('chat-form') as HTMLFormElement;
-const chatInput = document.getElementById('chat-input') as HTMLInputElement;
-const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
-
+var chatForm = document.getElementById('chat-form');
+var chatInput = document.getElementById('chat-input');
+var sendBtn = document.getElementById('send-btn');
 // disable send button when input is empty
-chatInput.addEventListener('input', () => {
+chatInput.addEventListener('input', function () {
     sendBtn.disabled = chatInput.value.trim() === '';
 });
-
-chatForm.addEventListener('submit', (e: Event) => {
+chatForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const text = chatInput.value.trim();
+    var text = chatInput.value.trim();
     if (text === '') {
         return;
     }
@@ -121,6 +102,5 @@ chatForm.addEventListener('submit', (e: Event) => {
     chatInput.value = '';
     sendBtn.disabled = true;
 });
-
 // Initialize the app upon reload
 initializeApp();
